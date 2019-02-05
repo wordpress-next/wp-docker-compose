@@ -1,0 +1,48 @@
+version: '3.3'
+services:
+   mailhog:
+     image: mailhog/mailhog:v1.0.0
+     ports:
+       - "1025:1025"
+       - "8025:8025"
+   db:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+       - ${WP_DATA}:/docker-entrypoint-initdb.d
+     environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+   wordpress:
+     depends_on:
+       - db
+     build: ./docker
+     ports:
+       - "${WP_PORT}:80"
+     volumes:
+       - ./config/php.conf.error.ini:/usr/local/etc/php/conf.d/error.ini
+       - ./config/php.conf.mail.ini:/usr/local/etc/php/conf.d/mail.ini
+       - ./config/msmtprc:/etc/msmtprc
+       - ${WP_APP}:/var/www/html
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+   wpcli:
+     depends_on:
+       - db
+       - wordpress
+     image: wordpress:cli
+     volumes:
+       - ./config/php.conf.error.ini:/usr/local/etc/php/conf.d/error.ini
+       - ./config/php.conf.mail.ini:/usr/local/etc/php/conf.d/mail.ini
+       - ./config/msmtprc:/etc/msmtprc
+       - ${WP_APP}:/var/www/html
+   adminer:
+     image: adminer
+     ports:
+       - 8080:8080
+volumes:
+    db_data:

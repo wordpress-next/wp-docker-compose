@@ -1,0 +1,6 @@
+.env
+.env-*
+.DS_Store*
+.*.sw?
+wp-app-*
+wp-data-*
