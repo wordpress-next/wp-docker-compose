@@ -9,5 +9,5 @@ Help you build fast develop environment.
 * Easy custom web port
 
 ## WP CLI
-./wp --help
-./wp plugin list
+* ./wp --help
+* ./wp plugin list
