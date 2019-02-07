@@ -25,7 +25,8 @@ services:
        - ./config/php.conf.error.ini:/usr/local/etc/php/conf.d/error.ini
        - ./config/php.conf.mail.ini:/usr/local/etc/php/conf.d/mail.ini
        - ./config/msmtprc:/etc/msmtprc
-       - ${WP_APP}:/var/www/html
+       - ${WP_WWW}:/var/www
+       - ${WP_PUBLIC}:/var/www/html
      environment:
        WORDPRESS_DB_HOST: db:3306
        WORDPRESS_DB_USER: wordpress
@@ -39,7 +40,8 @@ services:
        - ./config/php.conf.error.ini:/usr/local/etc/php/conf.d/error.ini
        - ./config/php.conf.mail.ini:/usr/local/etc/php/conf.d/mail.ini
        - ./config/msmtprc:/etc/msmtprc
-       - ${WP_APP}:/var/www/html
+       - ${WP_WWW}:/var/www
+       - ${WP_PUBLIC}:/var/www/html
    adminer:
      image: adminer
      ports:
