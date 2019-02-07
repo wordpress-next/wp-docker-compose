@@ -11,3 +11,6 @@ Help you build fast develop environment.
 ## WP CLI
 * ./wp --help
 * ./wp plugin list
+
+### WP CLI Export SQL
+* https://developer.wordpress.org/cli/commands/db/export/
