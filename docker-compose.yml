@@ -1,55 +1,59 @@
 version: '3.3'
 services:
-   mailhog:
-     image: mailhog/mailhog:v1.0.0
-     ports:
-       # - "1025:1025"
-       - "${MAIL_ADM_PORT}:8025"
-   db:
-     image: mysql:5.7
-     volumes:
-       - db_data:/var/lib/mysql
-       - ${WP_DATA}:/docker-entrypoint-initdb.d
-     networks:
-       - default
-       - wordpress-net 
-     environment:
-       MYSQL_ROOT_PASSWORD: somewordpress
-       MYSQL_DATABASE: wordpress
-       MYSQL_USER: wordpress
-       MYSQL_PASSWORD: wordpress
-   wordpress:
-     depends_on:
-       - db
-     build: ./docker
-     ports:
-       - "${WP_PORT}:80"
-     volumes:
-       - ./config/php.conf.error.ini:/usr/local/etc/php/conf.d/error.ini
-       - ./config/php.conf.mail.ini:/usr/local/etc/php/conf.d/mail.ini
-       - ./config/msmtprc:/etc/msmtprc
-       - ${WP_WWW}:/var/www
-       - ${WP_PUBLIC}:/var/www/html
-     environment:
-       WORDPRESS_DB_HOST: db:3306
-       WORDPRESS_DB_USER: wordpress
-       WORDPRESS_DB_PASSWORD: wordpress
-   wpcli:
-     depends_on:
-       - db
-       - wordpress
-     image: wordpress:cli
-     volumes:
-       - ./config/php.conf.error.ini:/usr/local/etc/php/conf.d/error.ini
-       - ./config/php.conf.mail.ini:/usr/local/etc/php/conf.d/mail.ini
-       - ./config/msmtprc:/etc/msmtprc
-       - ${WP_WWW}:/var/www
-       - ${WP_PUBLIC}:/var/www/html
-   adminer:
-     image: adminer
-     ports:
-       - "${ADMINER_PORT}:8080"
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - '${MAIL_ADM_PORT}:8025'
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+      - ${WP_DATA}:/docker-entrypoint-initdb.d
+    networks:
+      - default
+      - wordpress-net
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+  nginx:
+    depends_on:
+      - wordpress_cn
+    image: nginx:1.10.3-alpine
+    ports:
+      - '${WP_PORT}:80'
+    volumes:
+      - ${NGINX_CONFIG}:/etc/nginx/conf.d/default.conf
+  wordpress:
+    depends_on:
+      - db
+    build: ./docker
+    volumes:
+      - ./config/php.conf.error.ini:/usr/local/etc/php/conf.d/error.ini
+      - ./config/php.conf.mail.ini:/usr/local/etc/php/conf.d/mail.ini
+      - ./config/msmtprc:/etc/msmtprc
+      - ${WP_WWW}:/var/www
+      - ${WP_PUBLIC}:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+  wpcli:
+    depends_on:
+      - db
+      - wordpress
+    image: wordpress:cli
+    volumes:
+      - ./config/php.conf.error.ini:/usr/local/etc/php/conf.d/error.ini
+      - ./config/php.conf.mail.ini:/usr/local/etc/php/conf.d/mail.ini
+      - ./config/msmtprc:/etc/msmtprc
+      - ${WP_WWW}:/var/www
+      - ${WP_PUBLIC}:/var/www/html
+  adminer:
+    image: adminer
+    ports:
+      - '${ADMINER_PORT}:8080'
 volumes:
   db_data:
-networks:
-  wordpress-net:
+networks: wordpress-net:
