@@ -2,7 +2,7 @@ version: '3.3'
 services:
   nginx-official:
     depends_on:
-      - wordpress
+      - wordpress-official
     image: nginx:1.10.3-alpine
     ports:
       - '${WP_PORT}:80'

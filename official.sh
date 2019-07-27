@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose -f docker-compose-official-wp.yml $* 
+env $(cat .env-official) docker-compose -f docker-compose-official-wp.yml $* 
